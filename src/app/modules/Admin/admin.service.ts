@@ -2,11 +2,29 @@ import { Prisma, PrismaClient } from "@prisma/client";
 import { adminSearchAbleFields } from "./admin.constant";
 const prisma = new PrismaClient();
 
+
+const calculatePagination = (options: {
+    page?: number;
+    limit?: number;
+    sortOrder?: string,
+    sortBy?: string
+}) => {
+    const page: number = Number(options.page) || 1;
+    const limit: number = Number(options.limit) || 10;
+    const skip: number = (Number(page) - 1) * limit;
+
+    const sortBy: string = options.sortBy || "createdAt";
+    const sortOrder: string = options.sortOrder || "desc";
+
+    return { page, limit, skip, sortBy, sortOrder }
+}
+
 // const getAllFromDb = async () => {
 // const getAllFromDb = async (params: any) => {
 const getAllFromDb = async (params: any, options: any) => {
     // console.log({ options });
-    const { limit, page } = options;
+    // const { sortBy, sortOrder, limit, page } = options;
+    const { page, limit, skip, sortBy, sortOrder } = calculatePagination(options);
 
     // console.log({ params });
     const { searchTerm, ...filterData } = params;
@@ -92,8 +110,22 @@ const getAllFromDb = async (params: any, options: any) => {
 
     const result = await prisma.admin.findMany({
         where: whereConditions,
-        skip: limit * (Number(page) - 1),
-        take: Number(limit),
+        // skip: limit * (Number(page) - 1),
+        // take: Number(limit),
+        // orderBy: {
+        //     // createdAt: 'desc'
+        //     [options.sortBy]: options.sortOrder
+        // },
+        // orderBy: options.sortBy && options.sortOrder ? {
+        //     [options.sortBy]: options.sortOrder
+        // } : {
+        //     createdAt: 'desc'
+        // }
+        skip,
+        take: limit,
+        orderBy: {
+            [sortBy]: sortOrder
+        }
     });
 
     return result

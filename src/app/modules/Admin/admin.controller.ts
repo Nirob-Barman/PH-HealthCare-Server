@@ -29,7 +29,7 @@ const getAllFromDB = async (req: Request, res: Response) => {
         // const filterData = pick(req.query, ['name', 'email', 'searchTerm', 'contactNumber']);
         const filterData = pick(req.query, adminFilterableFields);
         // console.log(filterData);
-        const options = pick(req.query, ['sortBy', 'limit', 'page']);
+        const options = pick(req.query, ['sortBy', 'sortOrder', 'limit', 'page']);
         // console.log({ options });
         // const result = await AdminService.getAllFromDb(filterData as { searchTerm: string });
         // const result = await AdminService.getAllFromDb(filterData);
