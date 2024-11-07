@@ -5,25 +5,40 @@ const prisma = new PrismaClient();
 const getAllFromDb = async (params: any) => {
     // console.log({ params });
     const andConditions: Prisma.AdminWhereInput[] = [];
+    const adminSearchableFields = ['name', 'email'];
+
+    // if (params.searchTerm) {
+    //     andConditions.push({
+    //         OR: [
+    //             {
+    //                 name: {
+    //                     contains: params.searchTerm,
+    //                     mode: 'insensitive'
+    //                 }
+    //             },
+    //             {
+    //                 email: {
+    //                     contains: params.searchTerm,
+    //                     mode: 'insensitive'
+    //                 }
+    //             }
+    //         ]
+    //     })
+    // }
+    // console.dir(andConditions, { depth: 'infinity' });
 
     if (params.searchTerm) {
         andConditions.push({
-            OR: [
-                {
-                    name: {
-                        contains: params.searchTerm,
-                        mode: 'insensitive'
-                    }
-                },
-                {
-                    email: {
-                        contains: params.searchTerm,
-                        mode: 'insensitive'
-                    }
+            // OR: ['name', 'email'].map((key) => ({
+            OR: adminSearchableFields.map((key) => ({
+                [key]: {
+                    contains: params.searchTerm,
+                    mode: 'insensitive'
                 }
-            ]
+            }))
         })
     }
+
     console.dir(andConditions, { depth: 'infinity' });
 
     // const result = await prisma.admin.findMany();
