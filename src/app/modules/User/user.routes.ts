@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import { userController } from "./user.controller";
 
-
 const router = express.Router();
 
 // router.get("/", (req: Request, res: Response) => {
@@ -12,4 +11,4 @@ const router = express.Router();
 
 router.get("/", userController.createAdmin);
 
-export const userRoutes = router;
+export const UserRoutes = router;

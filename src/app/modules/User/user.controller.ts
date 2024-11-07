@@ -3,7 +3,7 @@ import { userService } from "./user.service";
 
 const createAdmin = async (req: Request, res: Response) => {
     try {
-        // console.log("user controller");
+        console.log("user controller");
         console.log(req.body);
         // const result = await userService.createAdmin();
         const result = await userService.createAdmin(req.body);
