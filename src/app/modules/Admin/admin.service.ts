@@ -51,8 +51,8 @@ const getAllFromDb = async (params: any) => {
             }))
         })
     }
-
-    console.dir(andConditions, { depth: 'infinity' });
+    
+    // console.dir(andConditions, { depth: 'infinity' });
 
     // const result = await prisma.admin.findMany();
     // const result = await prisma.admin.findMany({
