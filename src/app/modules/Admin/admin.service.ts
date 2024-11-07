@@ -1,14 +1,21 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { adminSearchAbleFields } from "./admin.constant";
 const prisma = new PrismaClient();
 
 // const getAllFromDb = async () => {
-const getAllFromDb = async (params: any) => {
+// const getAllFromDb = async (params: any) => {
+const getAllFromDb = async (params: any, options: any) => {
+    // console.log({ options });
+    const { limit, page } = options;
+
     // console.log({ params });
     const { searchTerm, ...filterData } = params;
     // console.log({ searchTerm, filterData });
 
+
+
     const andConditions: Prisma.AdminWhereInput[] = [];
-    const adminSearchableFields = ['name', 'email'];
+    // const adminSearchAbleFields = ['name', 'email'];
 
     // if (params.searchTerm) {
     //     andConditions.push({
@@ -33,7 +40,7 @@ const getAllFromDb = async (params: any) => {
     if (params.searchTerm) {
         andConditions.push({
             // OR: ['name', 'email'].map((key) => ({
-            OR: adminSearchableFields.map((key) => ({
+            OR: adminSearchAbleFields.map((key) => ({
                 [key]: {
                     contains: params.searchTerm,
                     mode: 'insensitive'
@@ -51,7 +58,7 @@ const getAllFromDb = async (params: any) => {
             }))
         })
     }
-    
+
     // console.dir(andConditions, { depth: 'infinity' });
 
     // const result = await prisma.admin.findMany();
@@ -79,15 +86,14 @@ const getAllFromDb = async (params: any) => {
     //     }
     // });
 
-
-
-
     const whereConditions: Prisma.AdminWhereInput = {
         AND: andConditions
     }
 
     const result = await prisma.admin.findMany({
-        where: whereConditions
+        where: whereConditions,
+        skip: limit * (Number(page) - 1),
+        take: Number(limit),
     });
 
     return result
