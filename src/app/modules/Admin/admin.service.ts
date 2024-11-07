@@ -130,8 +130,21 @@ const getAllFromDb = async (params: any, options: any) => {
             [sortBy]: sortOrder
         }
     });
+    
 
-    return result
+    const total = await prisma.admin.count({
+        where: whereConditions
+    });
+
+    // return result
+    return {
+        meta: {
+            page,
+            limit,
+            total
+        },
+        data: result
+    }
 }
 
 export const AdminService = { getAllFromDb }
