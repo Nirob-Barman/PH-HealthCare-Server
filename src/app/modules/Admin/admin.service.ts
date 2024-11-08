@@ -1,5 +1,5 @@
 // import { Prisma, PrismaClient } from "@prisma/client";
-import { Admin, Prisma } from "@prisma/client";
+import { Admin, Prisma, UserStatus } from "@prisma/client";
 import { adminSearchAbleFields } from "./admin.constant";
 import { paginationHelpers } from "../../../helpers/paginationHelper";
 import prisma from "../../shared/prisma";
@@ -130,7 +130,6 @@ const getAllFromDb = async (params: any, options: any) => {
             [sortBy]: sortOrder
         }
     });
-    
 
     const total = await prisma.admin.count({
         where: whereConditions
@@ -158,7 +157,6 @@ const getByIdFromDB = async (id: string) => {
     return result;
 };
 
-
 const updateIntoDB = async (id: string, data: Partial<Admin>): Promise<Admin> => {
     await prisma.admin.findUniqueOrThrow({
         where: {
@@ -177,5 +175,64 @@ const updateIntoDB = async (id: string, data: Partial<Admin>): Promise<Admin> =>
     return result;
 };
 
+const deleteFromDB = async (id: string): Promise<Admin | null> => {
 
-export const AdminService = { getAllFromDb, getByIdFromDB, updateIntoDB }
+    await prisma.admin.findUniqueOrThrow({
+        where: {
+            id
+        }
+    });
+
+    const result = await prisma.$transaction(async (transactionClient) => {
+        const adminDeletedData = await transactionClient.admin.delete({
+            where: {
+                id
+            }
+        });
+
+        await transactionClient.user.delete({
+            where: {
+                email: adminDeletedData.email
+            }
+        });
+
+        return adminDeletedData;
+    });
+
+    return result;
+}
+
+const softDeleteFromDB = async (id: string): Promise<Admin | null> => {
+    await prisma.admin.findUniqueOrThrow({
+        where: {
+            id,
+            isDeleted: false
+        }
+    });
+
+    const result = await prisma.$transaction(async (transactionClient) => {
+        const adminDeletedData = await transactionClient.admin.update({
+            where: {
+                id
+            },
+            data: {
+                isDeleted: true
+            }
+        });
+
+        await transactionClient.user.update({
+            where: {
+                email: adminDeletedData.email
+            },
+            data: {
+                status: UserStatus.DELETED
+            }
+        });
+
+        return adminDeletedData;
+    });
+
+    return result;
+}
+
+export const AdminService = { getAllFromDb, getByIdFromDB, updateIntoDB, deleteFromDB, softDeleteFromDB }

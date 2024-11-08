@@ -70,7 +70,7 @@ const getByIdFromDB = (async (req: Request, res: Response) => {
             error: err
         })
     }
-    
+
 })
 
 
@@ -91,7 +91,28 @@ const updateIntoDB = (async (req: Request, res: Response) => {
             error: err
         })
     }
-    
+
 })
 
-export const AdminController = { getAllFromDB, getByIdFromDB, updateIntoDB }
+const deleteFromDB = (async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        const result = await AdminService.deleteFromDB(id);
+
+        res.status(200).json({
+            success: true,
+            message: "Admin data deleted successfully",
+            data: result
+        });
+    }
+    catch (err) {
+        res.status(200).json({
+            success: false,
+            message: err?.name || "Something weng wrong",
+            error: err
+        })
+    }
+})
+
+export const AdminController = { getAllFromDB, getByIdFromDB, updateIntoDB, deleteFromDB };
