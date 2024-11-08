@@ -80,6 +80,10 @@ const getAllFromDb = async (params: any, options: any) => {
         })
     }
 
+    andConditions.push({
+        isDeleted: false
+    })
+
     // console.dir(andConditions, { depth: 'infinity' });
 
     // const result = await prisma.admin.findMany();
@@ -146,7 +150,7 @@ const getAllFromDb = async (params: any, options: any) => {
     }
 }
 
-const getByIdFromDB = async (id: string) => {
+const getByIdFromDB = async (id: string): Promise<Admin | null> => {
     const result = await prisma.admin.findUnique({
         where: {
             id,
@@ -154,7 +158,7 @@ const getByIdFromDB = async (id: string) => {
         }
     })
 
-    return result;
+    return result
 };
 
 const updateIntoDB = async (id: string, data: Partial<Admin>): Promise<Admin> => {
