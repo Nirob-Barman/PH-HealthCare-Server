@@ -4,6 +4,7 @@ import { AdminService } from "./admin.service";
 import pick from "../../shared/pick";
 import { adminFilterableFields } from "./admin.constant";
 import sendResponse from "../../shared/sendResponse";
+import { StatusCodes } from "http-status-codes";
 // const prisma = new PrismaClient();
 
 // const pick = <T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]) : Partial<T> => {
@@ -64,7 +65,8 @@ const getAllFromDB = async (req: Request, res: Response) => {
         // });
 
         sendResponse(res, {
-            statusCode: 200,
+            // statusCode: 200,
+            statusCode: StatusCodes.OK,
             success: true,
             message: "Admin data fetched successfully",
             meta: result.meta,
@@ -92,7 +94,8 @@ const getByIdFromDB = (async (req: Request, res: Response) => {
         //     data: result
         // });
         sendResponse(res, {
-            statusCode: 200,
+            // statusCode: 200,
+            statusCode: StatusCodes.OK,
             success: true,
             message: "Admin data fetched successfully",
             data: result
