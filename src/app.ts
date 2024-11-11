@@ -1,8 +1,11 @@
-import express, { Application, Request, Response } from "express";
+import express, { Application, NextFunction, Request, Response } from "express";
 import cors from "cors";
-import { UserRoutes } from "./app/modules/User/user.routes";
-import { AdminRoutes } from "./app/modules/Admin/admin.routes";
+// import { UserRoutes } from "./app/modules/User/user.routes";
+// import { AdminRoutes } from "./app/modules/Admin/admin.routes";
 import router from "./app/routes";
+import { StatusCodes } from "http-status-codes";
+import { error } from "console";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 // import { UserRoutes } from "./app/modules/User/user";
 
 const app: Application = express();
@@ -24,6 +27,17 @@ app.get('/', (req: Request, res: Response) => {
 // app.use('/api/v1/admin', AdminRoutes)
 
 app.use('/api/v1', router);
+
+// app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+//     // console.log("Error Occured", err);
+//     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+//         success: false,
+//         message: err.name || "Something went wrong",
+//         error: err
+//     })
+// });
+
+app.use(globalErrorHandler);
 
 export default app;
 

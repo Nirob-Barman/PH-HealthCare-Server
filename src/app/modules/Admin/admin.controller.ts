@@ -1,5 +1,5 @@
 // import { PrismaClient } from "@prisma/client";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { AdminService } from "./admin.service";
 import pick from "../../shared/pick";
 import { adminFilterableFields } from "./admin.constant";
@@ -40,7 +40,7 @@ import { StatusCodes } from "http-status-codes";
 //     });
 // }
 
-const getAllFromDB = async (req: Request, res: Response) => {
+const getAllFromDB = async (req: Request, res: Response, next: NextFunction) => {
     try {
         // pick(req.query, ['name', 'email', 'searchTerm', 'contactNumber']);
         // console.log(req.query);
@@ -74,16 +74,17 @@ const getAllFromDB = async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        res.status(200).json({
-            success: false,
-            message: err?.name || "Something weng wrong",
-            error: err
-        })
+        // res.status(200).json({
+        //     success: false,
+        //     message: err?.name || "Something weng wrong",
+        //     error: err
+        // })
+        next(err);
     }
 }
 
 
-const getByIdFromDB = (async (req: Request, res: Response) => {
+const getByIdFromDB = (async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const result = await AdminService.getByIdFromDB(id);
@@ -103,17 +104,18 @@ const getByIdFromDB = (async (req: Request, res: Response) => {
 
     }
     catch (err) {
-        res.status(200).json({
-            success: false,
-            message: err?.name || "Something weng wrong",
-            error: err
-        })
+        // res.status(200).json({
+        //     success: false,
+        //     message: err?.name || "Something weng wrong",
+        //     error: err
+        // })
+        next(err);
     }
 
 })
 
 
-const updateIntoDB = (async (req: Request, res: Response) => {
+const updateIntoDB = (async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const result = await AdminService.updateIntoDB(id, req.body);
@@ -131,16 +133,18 @@ const updateIntoDB = (async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        res.status(200).json({
-            success: false,
-            message: err?.name || "Something weng wrong",
-            error: err
-        })
+        // res.status(200).json({
+        //     success: false,
+        //     message: err?.name || "Something weng wrong",
+        //     error: err
+        // })
+
+        next(err);
     }
 
 })
 
-const deleteFromDB = (async (req: Request, res: Response) => {
+const deleteFromDB = (async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
 
@@ -160,15 +164,16 @@ const deleteFromDB = (async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        res.status(200).json({
-            success: false,
-            message: err?.name || "Something weng wrong",
-            error: err
-        })
+        // res.status(200).json({
+        //     success: false,
+        //     message: err?.name || "Something weng wrong",
+        //     error: err
+        // })
+        next(err);
     }
 })
 
-const softDeleteFromDB = (async (req: Request, res: Response) => {
+const softDeleteFromDB = (async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const result = await AdminService.softDeleteFromDB(id);
@@ -187,11 +192,12 @@ const softDeleteFromDB = (async (req: Request, res: Response) => {
         })
     }
     catch (err) {
-        res.status(200).json({
-            success: false,
-            message: err?.name || "Something weng wrong",
-            error: err
-        })
+        // res.status(200).json({
+        //     success: false,
+        //     message: err?.name || "Something weng wrong",
+        //     error: err
+        // })
+        next(err);
     }
 
 });
