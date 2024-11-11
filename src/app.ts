@@ -39,5 +39,17 @@ app.use('/api/v1', router);
 
 app.use(globalErrorHandler);
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+    // console.log(req);
+    res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "Route Not found",
+        error: {
+            path: req.originalUrl,
+            message: "Route Not found"
+        }
+    })
+});
+
 export default app;
 
