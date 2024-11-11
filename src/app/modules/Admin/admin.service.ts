@@ -3,6 +3,8 @@ import { Admin, Prisma, UserStatus } from "@prisma/client";
 import { adminSearchAbleFields } from "./admin.constant";
 import { paginationHelpers } from "../../../helpers/paginationHelper";
 import prisma from "../../shared/prisma";
+import { IAdminFilterRequest } from "./admin.interface";
+import { IPaginationOptions } from "../../interfaces/pagination";
 // const prisma = new PrismaClient();
 
 
@@ -24,7 +26,8 @@ import prisma from "../../shared/prisma";
 
 // const getAllFromDb = async () => {
 // const getAllFromDb = async (params: any) => {
-const getAllFromDb = async (params: any, options: any) => {
+// const getAllFromDb = async (params: any, options: any) => {
+const getAllFromDb = async (params: IAdminFilterRequest, options: IPaginationOptions) => {
     // console.log({ options });
     // const { sortBy, sortOrder, limit, page } = options;
     const { page, limit, skip, sortBy, sortOrder } = paginationHelpers.calculatePagination(options);

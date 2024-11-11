@@ -110,7 +110,6 @@ const getAllFromDB: RequestHandler = catchAsync(async (req, res) => {
     })
 })
 
-
 // const getByIdFromDB = (async (req: Request, res: Response, next: NextFunction) => {
 //     try {
 //         const { id } = req.params;
@@ -144,7 +143,6 @@ const getAllFromDB: RequestHandler = catchAsync(async (req, res) => {
 
 
 const getByIdFromDB = catchAsync((async (req, res) => {
-
     const { id } = req.params;
     const result = await AdminService.getByIdFromDB(id);
 
