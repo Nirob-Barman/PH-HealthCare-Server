@@ -1,5 +1,5 @@
 // import { PrismaClient } from "@prisma/client";
-import express, { NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, RequestHandler, Response } from "express";
 import { AdminService } from "./admin.service";
 import pick from "../../shared/pick";
 import { adminFilterableFields } from "./admin.constant";
@@ -40,166 +40,250 @@ import { StatusCodes } from "http-status-codes";
 //     });
 // }
 
-const getAllFromDB = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        // pick(req.query, ['name', 'email', 'searchTerm', 'contactNumber']);
-        // console.log(req.query);
-        // const result = await prisma.admin.findMany();
-        // const result = await AdminService.getAllFromDb();
-        // const filterData = req.query;
-        // const filterData = pick(req.query, ['name', 'email', 'searchTerm', 'contactNumber']);
-        const filterData = pick(req.query, adminFilterableFields);
-        // console.log(filterData);
-        const options = pick(req.query, ['sortBy', 'sortOrder', 'limit', 'page']);
-        // console.log({ options });
-        // const result = await AdminService.getAllFromDb(filterData as { searchTerm: string });
-        // const result = await AdminService.getAllFromDb(filterData);
-        const result = await AdminService.getAllFromDb(filterData, options);
-
-        // res.status(200).json({
-        //     success: true,
-        //     message: "Admin data fetched successfully",
-        //     // data: result
-        //     meta: result.meta,
-        //     data: result.data
-        // });
-
-        sendResponse(res, {
-            // statusCode: 200,
-            statusCode: StatusCodes.OK,
-            success: true,
-            message: "Admin data fetched successfully",
-            meta: result.meta,
-            data: result.data
-        })
-    }
-    catch (err) {
-        // res.status(200).json({
-        //     success: false,
-        //     message: err?.name || "Something weng wrong",
-        //     error: err
-        // })
-        next(err);
+const catchAsync = (fn: RequestHandler) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            await fn(req, res, next)
+        }
+        catch (err) {
+            next(err)
+        }
     }
 }
 
+// const getAllFromDB = async (req: Request, res: Response, next: NextFunction) => {
+// const getAllFromDB: RequestHandler = async (req, res, next) => {
+//     try {
+//         // pick(req.query, ['name', 'email', 'searchTerm', 'contactNumber']);
+//         // console.log(req.query);
+//         // const result = await prisma.admin.findMany();
+//         // const result = await AdminService.getAllFromDb();
+//         // const filterData = req.query;
+//         // const filterData = pick(req.query, ['name', 'email', 'searchTerm', 'contactNumber']);
+//         const filterData = pick(req.query, adminFilterableFields);
+//         // console.log(filterData);
+//         const options = pick(req.query, ['sortBy', 'sortOrder', 'limit', 'page']);
+//         // console.log({ options });
+//         // const result = await AdminService.getAllFromDb(filterData as { searchTerm: string });
+//         // const result = await AdminService.getAllFromDb(filterData);
+//         const result = await AdminService.getAllFromDb(filterData, options);
 
-const getByIdFromDB = (async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params;
-        const result = await AdminService.getByIdFromDB(id);
+//         // res.status(200).json({
+//         //     success: true,
+//         //     message: "Admin data fetched successfully",
+//         //     // data: result
+//         //     meta: result.meta,
+//         //     data: result.data
+//         // });
 
-        // res.status(200).json({
-        //     success: true,
-        //     message: "Admin data fetched successfully",
-        //     data: result
-        // });
-        sendResponse(res, {
-            // statusCode: 200,
-            statusCode: StatusCodes.OK,
-            success: true,
-            message: "Admin data fetched successfully",
-            data: result
-        })
+//         sendResponse(res, {
+//             // statusCode: 200,
+//             statusCode: StatusCodes.OK,
+//             success: true,
+//             message: "Admin data fetched successfully",
+//             meta: result.meta,
+//             data: result.data
+//         })
+//     }
+//     catch (err) {
+//         // res.status(200).json({
+//         //     success: false,
+//         //     message: err?.name || "Something weng wrong",
+//         //     error: err
+//         // })
+//         next(err);
+//     }
+// }
 
-    }
-    catch (err) {
-        // res.status(200).json({
-        //     success: false,
-        //     message: err?.name || "Something weng wrong",
-        //     error: err
-        // })
-        next(err);
-    }
+const getAllFromDB: RequestHandler = catchAsync(async (req, res) => {
+    const filterData = pick(req.query, adminFilterableFields);
+    const options = pick(req.query, ['sortBy', 'sortOrder', 'limit', 'page']);
+    const result = await AdminService.getAllFromDb(filterData, options);
 
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Admin data fetched successfully",
+        meta: result.meta,
+        data: result.data
+    })
 })
 
 
-const updateIntoDB = (async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params;
-        const result = await AdminService.updateIntoDB(id, req.body);
-        // res.status(200).json({
-        //     success: true,
-        //     message: "Admin data updated successfully",
-        //     data: result
-        // });
+// const getByIdFromDB = (async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const { id } = req.params;
+//         const result = await AdminService.getByIdFromDB(id);
 
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Admin data updated successfully",
-            data: result
-        })
-    }
-    catch (err) {
-        // res.status(200).json({
-        //     success: false,
-        //     message: err?.name || "Something weng wrong",
-        //     error: err
-        // })
+//         // res.status(200).json({
+//         //     success: true,
+//         //     message: "Admin data fetched successfully",
+//         //     data: result
+//         // });
+//         sendResponse(res, {
+//             // statusCode: 200,
+//             statusCode: StatusCodes.OK,
+//             success: true,
+//             message: "Admin data fetched successfully",
+//             data: result
+//         })
 
-        next(err);
-    }
+//     }
+//     catch (err) {
+//         // res.status(200).json({
+//         //     success: false,
+//         //     message: err?.name || "Something weng wrong",
+//         //     error: err
+//         // })
+//         next(err);
+//     }
 
-})
+// })
 
-const deleteFromDB = (async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params;
 
-        const result = await AdminService.deleteFromDB(id);
 
-        // res.status(200).json({
-        //     success: true,
-        //     message: "Admin data deleted successfully",
-        //     data: result
-        // });
+const getByIdFromDB = catchAsync((async (req, res) => {
 
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Admin data deleted successfully",
-            data: result
-        })
-    }
-    catch (err) {
-        // res.status(200).json({
-        //     success: false,
-        //     message: err?.name || "Something weng wrong",
-        //     error: err
-        // })
-        next(err);
-    }
-})
+    const { id } = req.params;
+    const result = await AdminService.getByIdFromDB(id);
 
-const softDeleteFromDB = (async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.params;
-        const result = await AdminService.softDeleteFromDB(id);
+    sendResponse(res, {
+        // statusCode: 200,
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: "Admin data fetched successfully",
+        data: result
+    })
+}))
 
-        // res.status(200).json({
-        //     success: true,
-        //     message: "Admin data deleted successfully",
-        //     data: result
-        // });
 
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Admin data deleted successfully",
-            data: result
-        })
-    }
-    catch (err) {
-        // res.status(200).json({
-        //     success: false,
-        //     message: err?.name || "Something weng wrong",
-        //     error: err
-        // })
-        next(err);
-    }
+// const updateIntoDB = (async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const { id } = req.params;
+//         const result = await AdminService.updateIntoDB(id, req.body);
+//         // res.status(200).json({
+//         //     success: true,
+//         //     message: "Admin data updated successfully",
+//         //     data: result
+//         // });
 
-});
+//         sendResponse(res, {
+//             statusCode: 200,
+//             success: true,
+//             message: "Admin data updated successfully",
+//             data: result
+//         })
+//     }
+//     catch (err) {
+//         // res.status(200).json({
+//         //     success: false,
+//         //     message: err?.name || "Something weng wrong",
+//         //     error: err
+//         // })
+
+//         next(err);
+//     }
+
+// })
+
+const updateIntoDB = catchAsync((async (req, res) => {
+
+    const { id } = req.params;
+    const result = await AdminService.updateIntoDB(id, req.body);
+    // res.status(200).json({
+    //     success: true,
+    //     message: "Admin data updated successfully",
+    //     data: result
+    // });
+
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Admin data updated successfully",
+        data: result
+    })
+
+}))
+
+// const deleteFromDB = (async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const { id } = req.params;
+
+//         const result = await AdminService.deleteFromDB(id);
+
+//         // res.status(200).json({
+//         //     success: true,
+//         //     message: "Admin data deleted successfully",
+//         //     data: result
+//         // });
+
+//         sendResponse(res, {
+//             statusCode: 200,
+//             success: true,
+//             message: "Admin data deleted successfully",
+//             data: result
+//         })
+//     }
+//     catch (err) {
+//         // res.status(200).json({
+//         //     success: false,
+//         //     message: err?.name || "Something weng wrong",
+//         //     error: err
+//         // })
+//         next(err);
+//     }
+// })
+
+
+const deleteFromDB = catchAsync((async (req, res) => {
+    const { id } = req.params;
+    const result = await AdminService.deleteFromDB(id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Admin data deleted successfully",
+        data: result
+    })
+}))
+
+// const softDeleteFromDB = (async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const { id } = req.params;
+//         const result = await AdminService.softDeleteFromDB(id);
+
+//         // res.status(200).json({
+//         //     success: true,
+//         //     message: "Admin data deleted successfully",
+//         //     data: result
+//         // });
+
+//         sendResponse(res, {
+//             statusCode: 200,
+//             success: true,
+//             message: "Admin data deleted successfully",
+//             data: result
+//         })
+//     }
+//     catch (err) {
+//         // res.status(200).json({
+//         //     success: false,
+//         //     message: err?.name || "Something weng wrong",
+//         //     error: err
+//         // })
+//         next(err);
+//     }
+
+// });
+
+const softDeleteFromDB = catchAsync((async (req, res) => {
+    const { id } = req.params;
+    const result = await AdminService.softDeleteFromDB(id);
+    sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Admin data deleted successfully",
+        data: result
+    })
+}))
 
 export const AdminController = { getAllFromDB, getByIdFromDB, updateIntoDB, deleteFromDB, softDeleteFromDB };
