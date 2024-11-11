@@ -5,6 +5,7 @@ import pick from "../../shared/pick";
 import { adminFilterableFields } from "./admin.constant";
 import sendResponse from "../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
+import catchAsync from "../../shared/catchAsync";
 // const prisma = new PrismaClient();
 
 // const pick = <T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: K[]) : Partial<T> => {
@@ -40,16 +41,16 @@ import { StatusCodes } from "http-status-codes";
 //     });
 // }
 
-const catchAsync = (fn: RequestHandler) => {
-    return async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            await fn(req, res, next)
-        }
-        catch (err) {
-            next(err)
-        }
-    }
-}
+// const catchAsync = (fn: RequestHandler) => {
+//     return async (req: Request, res: Response, next: NextFunction) => {
+//         try {
+//             await fn(req, res, next)
+//         }
+//         catch (err) {
+//             next(err)
+//         }
+//     }
+// }
 
 // const getAllFromDB = async (req: Request, res: Response, next: NextFunction) => {
 // const getAllFromDB: RequestHandler = async (req, res, next) => {
