@@ -102,33 +102,38 @@ const loginUser = async (payload: {
 
 const refreshToken = async (token: string) => {
     console.log("refresh token called");
-    // let decodedData;
-    // try {
-    //     decodedData = jwtHelpers.verifyToken(token, config.jwt.refresh_token_secret as Secret);
-    // }
-    // catch (err) {
-    //     throw new Error("You are not authorized!")
-    // }
+    let decodedData;
+    try {
+        decodedData = jwtHelpers.verifyToken(token, "secret");
+        // decodedData = jwtHelpers.verifyToken(token, config.jwt.refresh_token_secret as Secret);
+    }
+    catch (err) {
+        throw new Error("You are not authorized!")
+    }
 
-    // const userData = await prisma.user.findUniqueOrThrow({
-    //     where: {
-    //         email: decodedData.email,
-    //         status: UserStatus.ACTIVE
-    //     }
-    // });
+    // console.log({ decodedData });
 
-    // const accessToken = jwtHelpers.generateToken({
-    //     email: userData.email,
-    //     role: userData.role
-    // },
-    //     config.jwt.jwt_secret as Secret,
-    //     config.jwt.expires_in as string
-    // );
+    const userData = await prisma.user.findUniqueOrThrow({
+        where: {
+            email: decodedData.email,
+            status: UserStatus.ACTIVE
+        }
+    });
 
-    // return {
-    //     accessToken,
-    //     needPasswordChange: userData.needPasswordChange
-    // };
+    const accessToken = jwtHelpers.generateToken({
+        email: userData.email,
+        role: userData.role
+    },
+        "secret",
+        "5m"
+        // config.jwt.jwt_secret as Secret,
+        // config.jwt.expires_in as string
+    );
+
+    return {
+        accessToken,
+        needPasswordChange: userData.needPasswordChange
+    };
 
 };
 
