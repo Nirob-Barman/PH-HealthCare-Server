@@ -16,9 +16,9 @@ const loginUser = async (payload: {
 
     const isCorrectPassword: boolean = await bcrypt.compare(payload.password, userData.password);
 
-    // if (!isCorrectPassword) {
-    //     throw new Error("Password incorrect!")
-    // }
+    if (!isCorrectPassword) {
+        throw new Error("Password incorrect!")
+    }
 
     const accessToken = jwt.sign(
         {
@@ -28,7 +28,7 @@ const loginUser = async (payload: {
         "secret",
         {
             algorithm: "HS256",
-            expiresIn: "15m"
+            expiresIn: "5m"
         }
     );
 
@@ -42,6 +42,18 @@ const loginUser = async (payload: {
     //     config.jwt.expires_in as string
     // );
 
+    const refreshToken = jwt.sign(
+        {
+            email: userData.email,
+            role: userData.role
+        },
+        "secret",
+        {
+            algorithm: "HS256",
+            expiresIn: "30d"
+        }
+    );
+
     // const refreshToken = jwtHelpers.generateToken({
     //     email: userData.email,
     //     role: userData.role
@@ -50,13 +62,13 @@ const loginUser = async (payload: {
     //     config.jwt.refresh_token_expires_in as string
     // );
 
-    return userData;
+    // return userData;
 
-    // return {
-    //     accessToken,
-    //     refreshToken,
-    //     needPasswordChange: userData.needPasswordChange
-    // };
+    return {
+        accessToken,
+        refreshToken,
+        needPasswordChange: userData.needPasswordChange
+    };
 };
 
 

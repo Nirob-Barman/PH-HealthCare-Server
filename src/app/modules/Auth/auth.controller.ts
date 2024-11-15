@@ -7,22 +7,22 @@ import { StatusCodes } from "http-status-codes";
 const loginUser = catchAsync(async (req: Request, res: Response) => {
     const result = await AuthServices.loginUser(req.body);
 
-    // const { refreshToken } = result;
+    const { refreshToken } = result;
 
-    // res.cookie('refreshToken', refreshToken, {
-    //     secure: false,
-    //     httpOnly: true
-    // });
+    res.cookie('refreshToken', refreshToken, {
+        secure: false,
+        httpOnly: true
+    });
 
     sendResponse(res, {
         statusCode: StatusCodes.OK,
         success: true,
         message: "Logged in successfully!",
-        data: result
-        // data: {
-        //     accessToken: result.accessToken,
-        //     needPasswordChange: result.needPasswordChange
-        // }
+        // data: result
+        data: {
+            accessToken: result.accessToken,
+            needPasswordChange: result.needPasswordChange
+        }
     })
 });
 
