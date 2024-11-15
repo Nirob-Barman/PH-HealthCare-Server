@@ -7,9 +7,11 @@ import { StatusCodes } from "http-status-codes";
 import { error } from "console";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 // import { UserRoutes } from "./app/modules/User/user";
+import cookieParser from "cookie-parser";
 
 const app: Application = express();
 app.use(cors());
+app.use(cookieParser());
 
 // parser
 app.use(express.json());
