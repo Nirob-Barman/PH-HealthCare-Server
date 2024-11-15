@@ -1,7 +1,21 @@
 import { UserStatus } from "@prisma/client";
 import prisma from "../../shared/prisma";
 import * as bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import jwt, { Secret } from 'jsonwebtoken'
+import { jwtHelpers } from "../../../helpers/jwtHelpers";
+
+// const generateToken = (payload: any, secret: Secret, expiresIn: string) => {
+//     const token = jwt.sign(
+//         payload,
+//         secret,
+//         {
+//             algorithm: 'HS256',
+//             expiresIn
+//         }
+//     );
+
+//     return token;
+// };
 
 const loginUser = async (payload: {
     email: string,
@@ -20,47 +34,61 @@ const loginUser = async (payload: {
         throw new Error("Password incorrect!")
     }
 
-    const accessToken = jwt.sign(
-        {
-            email: userData.email,
-            role: userData.role
-        },
-        "secret",
-        {
-            algorithm: "HS256",
-            expiresIn: "5m"
-        }
-    );
+    // const accessToken = jwt.sign(
+    //     {
+    //         email: userData.email,
+    //         role: userData.role
+    //     },
+    //     "secret",
+    //     {
+    //         algorithm: "HS256",
+    //         expiresIn: "5m"
+    //     }
+    // );
+
+    // const accessToken = generateToken({
+    //     email: userData.email,
+    //     role: userData.role
+    // }, "secret", "5m");
 
     // console.log({ accessToken });
 
-    // const accessToken = jwtHelpers.generateToken({
-    //     email: userData.email,
-    //     role: userData.role
-    // },
-    //     config.jwt.jwt_secret as Secret,
-    //     config.jwt.expires_in as string
-    // );
-
-    const refreshToken = jwt.sign(
-        {
-            email: userData.email,
-            role: userData.role
-        },
+    const accessToken = jwtHelpers.generateToken({
+        email: userData.email,
+        role: userData.role
+    },
         "secret",
-        {
-            algorithm: "HS256",
-            expiresIn: "30d"
-        }
+        "5m"
+        // config.jwt.jwt_secret as Secret,
+        // config.jwt.expires_in as string
     );
 
-    // const refreshToken = jwtHelpers.generateToken({
+    // const refreshToken = jwt.sign(
+    //     {
+    //         email: userData.email,
+    //         role: userData.role
+    //     },
+    //     "secret",
+    //     {
+    //         algorithm: "HS256",
+    //         expiresIn: "30d"
+    //     }
+    // );
+
+    // const refreshToken = generateToken({
     //     email: userData.email,
     //     role: userData.role
-    // },
-    //     config.jwt.refresh_token_secret as Secret,
-    //     config.jwt.refresh_token_expires_in as string
-    // );
+    // }, "secret", "30d");
+
+    const refreshToken = jwtHelpers.generateToken({
+        email: userData.email,
+        role: userData.role
+    },
+        "secret",
+        "30d"
+        // config.jwt.refresh_token_secret as Secret,
+        // config.jwt.refresh_token_expires_in as string
+    );
 
     // return userData;
 
