@@ -49,6 +49,12 @@ router.get(
     userController.getAllFromDB
 );
 
+router.get(
+    '/me',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+    userController.getMyProfile
+)
+
 router.post("/create-admin", auth(UserRole.ADMIN, UserRole.SUPER_ADMIN), fileUploader.upload.single('file'),
     (req: Request, res: Response, next: NextFunction) => {
         req.body = userValidation.createAdmin.parse(JSON.parse(req.body.data))
