@@ -1,0 +1,56 @@
+import { Request, Response } from "express";
+import catchAsync from "../../shared/catchAsync";
+import pick from "../../shared/pick";
+import { patientFilterableFields } from "./patient.constants";
+import { PatientService } from "./patient.services";
+import { StatusCodes } from "http-status-codes";
+import sendResponse from "../../shared/sendResponse";
+
+const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
+    const filters = pick(req.query, patientFilterableFields);
+    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+
+    const result = await PatientService.getAllFromDB(filters, options);
+
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: 'Patient retrieval successfully',
+        meta: result.meta,
+        data: result.data,
+    });
+});
+
+const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
+
+    const { id } = req.params;
+    const result = await PatientService.getByIdFromDB(id);
+
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: 'Patient retrieval successfully',
+        data: result,
+    });
+});
+
+const updateIntoDB = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await PatientService.updateIntoDB(id, req.body);
+
+    sendResponse(res, {
+        statusCode: StatusCodes.OK,
+        success: true,
+        message: 'Patient updated successfully',
+        data: result,
+    });
+});
+
+
+export const PatientController = {
+    getAllFromDB,
+    getByIdFromDB,
+    updateIntoDB,
+    // deleteFromDB,
+    // softDelete,
+};

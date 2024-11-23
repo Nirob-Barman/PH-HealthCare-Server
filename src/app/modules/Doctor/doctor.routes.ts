@@ -7,6 +7,8 @@ import { DoctorValidation } from './doctor.validation';
 
 const router = express.Router();
 
+router.get('/', DoctorController.getAllFromDB);
+
 router.patch(
     '/:id',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
