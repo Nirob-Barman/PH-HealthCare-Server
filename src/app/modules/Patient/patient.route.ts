@@ -18,13 +18,13 @@ router.patch(
     PatientController.updateIntoDB
 );
 
-// router.delete(
-//     '/:id',
-//     PatientController.deleteFromDB
-// );
-// router.delete(
-//     '/soft/:id',
-//     PatientController.softDelete
-// );
+router.delete(
+    '/:id',
+    PatientController.deleteFromDB
+);
+router.delete(
+    '/soft/:id',
+    PatientController.softDelete
+);
 
 export const PatientRoutes = router;
