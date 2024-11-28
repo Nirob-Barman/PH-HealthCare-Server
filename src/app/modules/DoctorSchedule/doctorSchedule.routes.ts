@@ -18,11 +18,11 @@ router.get(
     DoctorScheduleController.getAllFromDB
 );
 
-// router.get(
-//     '/my-schedule',
-//     auth(UserRole.DOCTOR),
-//     DoctorScheduleController.getMySchedule
-// )
+router.get(
+    '/my-schedule',
+    auth(UserRole.DOCTOR),
+    DoctorScheduleController.getMySchedule
+)
 
 router.post(
     '/',
@@ -31,11 +31,11 @@ router.post(
     DoctorScheduleController.insertIntoDB
 );
 
-// router.delete(
-//     '/:id',
-//     auth(UserRole.DOCTOR),
-//     DoctorScheduleController.deleteFromDB
-// );
+router.delete(
+    '/:id',
+    auth(UserRole.DOCTOR),
+    DoctorScheduleController.deleteFromDB
+);
 
 
 export const DoctorScheduleRoutes = router;
